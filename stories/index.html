@@ -14,16 +14,58 @@
       height: 100vh;
       overflow: hidden;
       background-color: #000000;
+      font-family: sans-serif;
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
+    /* Floating Fullscreen Button */
+    #fullscreen-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #fullscreen-btn:active {
+      transform: scale(0.9);
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    #fullscreen-btn svg {
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
   <iframe id="pdf-viewer" src=""></iframe>
+
+  <!-- Floating Button to Toggle Fullscreen -->
+  <div id="fullscreen-btn" title="Toggle Fullscreen">
+    <!-- Fullscreen Enter Icon (Default) -->
+    <svg id="enter-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+    </svg>
+    <!-- Fullscreen Exit Icon (Hidden by default) -->
+    <svg id="exit-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+      <path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4"></path>
+    </svg>
+  </div>
 
   <script>
     // List of PDF stories
@@ -39,10 +81,65 @@
       // iOS can render PDF inline in iframe natively
       document.getElementById("pdf-viewer").src = randomPdf;
     } else {
-      // Android / others require a viewer
+      // Android / others require Google Docs Viewer
       var pdfUrl = "https://twinhall.github.io/comics/stories/" + randomPdf;
       document.getElementById("pdf-viewer").src = "https://docs.google.com/viewer?url=" + encodeURIComponent(pdfUrl) + "&embedded=true";
     }
+
+    // Toggle Fullscreen Function
+    var btn = document.getElementById("fullscreen-btn");
+    var enterIcon = document.getElementById("enter-icon");
+    var exitIcon = document.getElementById("exit-icon");
+
+    btn.addEventListener("click", function() {
+      var isFullscreen = document.fullscreenElement || 
+                         document.mozFullScreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.msFullscreenElement;
+                         
+      if (isFullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+          document.msExitFullscreen();
+        }
+      } else {
+        var docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+          docElm.requestFullscreen();
+        } else if (docElm.mozRequestFullScreen) { /* Firefox */
+          docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+          docElm.webkitRequestFullscreen();
+        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+          docElm.msRequestFullscreen();
+        }
+      }
+    });
+
+    // Update floating button icons based on fullscreen state changes
+    function updateFullscreenIcons() {
+      var isFullscreen = document.fullscreenElement || 
+                         document.mozFullScreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.msFullscreenElement;
+      if (isFullscreen) {
+        enterIcon.style.display = "none";
+        exitIcon.style.display = "block";
+      } else {
+        enterIcon.style.display = "block";
+        exitIcon.style.display = "none";
+      }
+    }
+
+    document.addEventListener("fullscreenchange", updateFullscreenIcons);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenIcons);
+    document.addEventListener("mozfullscreenchange", updateFullscreenIcons);
+    document.addEventListener("MSFullscreenChange", updateFullscreenIcons);
   </script>
 </body>
 </html>
