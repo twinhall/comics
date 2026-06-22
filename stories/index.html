@@ -16,10 +16,22 @@
       background-color: #000000;
       font-family: sans-serif;
     }
+    /* Container to hold the iframe and allow CSS scaling */
+    #viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      perspective: 1000px;
+    }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
+      transition: transform 0.05s linear;
+      transform-origin: center center;
     }
     /* Floating Fullscreen Button */
     #fullscreen-btn {
@@ -53,22 +65,23 @@
   </style>
 </head>
 <body>
-  <iframe id="pdf-viewer" src=""></iframe>
+  <div id="viewer-container">
+    <iframe id="pdf-viewer" src=""></iframe>
+  </div>
 
   <!-- Floating Button to Toggle Fullscreen -->
   <div id="fullscreen-btn" title="Toggle Fullscreen">
-    <!-- Fullscreen Enter Icon (Default) -->
+    <!-- Fullscreen Enter Icon -->
     <svg id="enter-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
     </svg>
-    <!-- Fullscreen Exit Icon (Hidden by default) -->
+    <!-- Fullscreen Exit Icon -->
     <svg id="exit-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
       <path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4"></path>
     </svg>
   </div>
 
   <script>
-    // List of PDF stories
     var pdfs = ["buried_treasure.pdf", "genesis_1.pdf", "good_samaritan.pdf", "good_samaritan_hijra.pdf", "hingsha.pdf", "prodigal_son.pdf", "ruth_in_bd.pdf", "the_flower_man.pdf"];
 
     // Select a random PDF
@@ -76,18 +89,75 @@
     
     // Detect iOS to use native rendering, otherwise fallback to Google Docs Viewer
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    
-    // Cache-buster query parameter to force Google's servers to fetch the fresh compressed file
     var cacheBuster = "?v=" + Date.now();
+    var pdfViewer = document.getElementById("pdf-viewer");
     
     if (isIOS) {
-      // iOS can render PDF inline in iframe natively
-      document.getElementById("pdf-viewer").src = randomPdf + cacheBuster;
+      pdfViewer.src = randomPdf + cacheBuster;
     } else {
-      // Android / others require Google Docs Viewer
       var pdfUrl = "https://twinhall.github.io/comics/stories/" + randomPdf + cacheBuster;
-      document.getElementById("pdf-viewer").src = "https://docs.google.com/viewer?url=" + encodeURIComponent(pdfUrl) + "&embedded=true";
+      pdfViewer.src = "https://docs.google.com/viewer?url=" + encodeURIComponent(pdfUrl) + "&embedded=true";
     }
+
+    // TWO-FINGER PINCH TO ZOOM FOR IFRAME
+    var scale = 1;
+    var initDist = 0;
+    var isPinching = false;
+
+    function getDistance(t1, t2) {
+      return Math.sqrt(Math.pow(t1.clientX - t2.clientX, 2) + Math.pow(t1.clientY - t2.clientY, 2));
+    }
+
+    // Attach listeners to the body to capture pinch gestures
+    document.body.addEventListener("touchstart", function(e) {
+      if (e.touches.length === 2) {
+        initDist = getDistance(e.touches[0], e.touches[1]);
+        isPinching = true;
+      }
+    });
+
+    document.body.addEventListener("touchmove", function(e) {
+      if (isPinching && e.touches.length === 2 && initDist > 0) {
+        e.preventDefault(); // Prevent default browser zoom/scroll while pinching
+        var dist = getDistance(e.touches[0], e.touches[1]);
+        var factor = dist / initDist;
+        var newScale = scale * factor;
+        
+        // Bound zoom between 1x and 4x
+        if (newScale < 1) newScale = 1;
+        if (newScale > 4) newScale = 4;
+        
+        pdfViewer.style.transform = "scale(" + newScale + ")";
+      }
+    });
+
+    document.body.addEventListener("touchend", function(e) {
+      if (e.touches.length < 2 && isPinching) {
+        isPinching = false;
+        
+        // Extract scale from matrix to save current zoom level
+        var transform = pdfViewer.style.transform;
+        var match = transform.match(/scale\(([^)]+)\)/);
+        if (match) {
+          scale = parseFloat(match[1]);
+        }
+        initDist = 0;
+      }
+    });
+
+    // Double tap to reset zoom
+    var lastTap = 0;
+    document.body.addEventListener("touchend", function(e) {
+      var currentTime = new Date().getTime();
+      var tapLength = currentTime - lastTap;
+      if (tapLength < 300 && tapLength > 0) {
+        // Double tap detected! Reset zoom
+        scale = 1;
+        pdfViewer.style.transform = "scale(1)";
+        e.preventDefault();
+      }
+      lastTap = currentTime;
+    });
 
     // Toggle Fullscreen Function
     var btn = document.getElementById("fullscreen-btn");
@@ -97,39 +167,38 @@
     btn.addEventListener("click", function() {
       var isFullscreen = document.fullscreenElement || 
                          document.mozFullScreenElement || 
-                         document.webkitFullscreenElement || 
+                         document.webkitFullScreenElement || 
                          document.msFullscreenElement;
                          
       if (isFullscreen) {
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
+        } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        } else if (document.webkitExitFullscreen) {
           document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
+        } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
         }
       } else {
         var docElm = document.documentElement;
         if (docElm.requestFullscreen) {
           docElm.requestFullscreen();
-        } else if (docElm.mozRequestFullScreen) { /* Firefox */
+        } else if (docElm.mozRequestFullScreen) {
           docElm.mozRequestFullScreen();
-        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        } else if (docElm.webkitRequestFullscreen) {
           docElm.webkitRequestFullscreen();
-        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+        } else if (docElm.msRequestFullscreen) {
           docElm.msRequestFullscreen();
         }
       }
     });
 
-    // Update floating button icons based on fullscreen state changes
     function updateFullscreenIcons() {
       var isFullscreen = document.fullscreenElement || 
                          document.mozFullScreenElement || 
-                         document.webkitFullscreenElement || 
-                         document.msFullscreenElement;
+                         document.webkitFullScreenElement || 
+                         document.msFullScreenElement;
       if (isFullscreen) {
         enterIcon.style.display = "none";
         exitIcon.style.display = "block";
