@@ -265,6 +265,16 @@
       }
     }
 
+    // Preload neighbor audios for smooth performance
+    function preloadNeighbors(pageNum) {
+      for (var offset of [-1, 1]) {
+        var neighbor = document.getElementById("audio-" + (pageNum + offset));
+        if (neighbor) {
+          neighbor.setAttribute("preload", "auto");
+        }
+      }
+    }
+
     function setPlayIcon(btn) {
       if (!btn) return;
       btn.querySelector(".play-icon").style.display = "block";
@@ -285,6 +295,10 @@
           currentAudio = null;
           currentBtn = null;
         }
+      });
+      audio.addEventListener("play", function() {
+        var num = parseInt(this.id.split("-")[1], 10);
+        preloadNeighbors(num);
       });
     });
 
