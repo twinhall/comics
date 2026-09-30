@@ -1,0 +1,101 @@
+{
+ "id": "splitting-the-bill",
+ "dur": 55.69,
+ "takes": [
+  {
+   "key": "splitting-the-bill-s01",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    0
+   ],
+   "start": 0.3,
+   "trim": 0.21,
+   "len": 5.33
+  },
+  {
+   "key": "splitting-the-bill-s02",
+   "kind": "dialogue",
+   "room": "restaurant",
+   "lines": [
+    1,
+    2
+   ],
+   "start": 6.08,
+   "trim": 0.12,
+   "len": 5.58
+  },
+  {
+   "key": "splitting-the-bill-s03",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    3
+   ],
+   "start": 12.46,
+   "trim": 0.57,
+   "len": 3.63
+  },
+  {
+   "key": "splitting-the-bill-s04",
+   "kind": "dialogue",
+   "room": "restaurant",
+   "lines": [
+    4,
+    5,
+    6
+   ],
+   "start": 16.54,
+   "trim": 0.1,
+   "len": 10.84
+  },
+  {
+   "key": "splitting-the-bill-s05",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    7
+   ],
+   "start": 28.18,
+   "trim": 0.41,
+   "len": 5.19
+  },
+  {
+   "key": "splitting-the-bill-s06",
+   "kind": "dialogue",
+   "room": "restaurant",
+   "lines": [
+    8,
+    9,
+    10
+   ],
+   "start": 33.82,
+   "trim": 0.26,
+   "len": 6.13
+  },
+  {
+   "key": "splitting-the-bill-s07",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    11,
+    12
+   ],
+   "start": 40.75,
+   "trim": 0.67,
+   "len": 9.26
+  },
+  {
+   "key": "splitting-the-bill-s08",
+   "kind": "dialogue",
+   "room": "street",
+   "lines": [
+    13,
+    14
+   ],
+   "start": 50.46,
+   "trim": 0.45,
+   "len": 4.63
+  }
+ ]
+}

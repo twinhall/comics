@@ -1,0 +1,101 @@
+{
+ "id": "dinner-ends-at-eight",
+ "dur": 80.419,
+ "takes": [
+  {
+   "key": "dinner-ends-at-eight-s01",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    0,
+    1
+   ],
+   "start": 0.3,
+   "trim": 0.3,
+   "len": 12.97
+  },
+  {
+   "key": "dinner-ends-at-eight-s02",
+   "kind": "dialogue",
+   "room": "sofa",
+   "lines": [
+    2,
+    3,
+    4
+   ],
+   "start": 13.72,
+   "trim": 0.01,
+   "len": 12.41
+  },
+  {
+   "key": "dinner-ends-at-eight-s03",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    5
+   ],
+   "start": 26.93,
+   "trim": 0.57,
+   "len": 5.95
+  },
+  {
+   "key": "dinner-ends-at-eight-s04",
+   "kind": "dialogue",
+   "room": "home",
+   "lines": [
+    6
+   ],
+   "start": 33.33,
+   "trim": 0.19,
+   "len": 6.369
+  },
+  {
+   "key": "dinner-ends-at-eight-s05",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    7,
+    8
+   ],
+   "start": 40.499,
+   "trim": 0.41,
+   "len": 8.52
+  },
+  {
+   "key": "dinner-ends-at-eight-s06",
+   "kind": "dialogue",
+   "room": "home",
+   "lines": [
+    9,
+    10,
+    11
+   ],
+   "start": 49.469,
+   "trim": 0.0,
+   "len": 10.84
+  },
+  {
+   "key": "dinner-ends-at-eight-s07",
+   "kind": "narration",
+   "room": null,
+   "lines": [
+    12,
+    13
+   ],
+   "start": 60.759,
+   "trim": 0.0,
+   "len": 14.62
+  },
+  {
+   "key": "dinner-ends-at-eight-s08",
+   "kind": "dialogue",
+   "room": "street",
+   "lines": [
+    14
+   ],
+   "start": 75.829,
+   "trim": 0.77,
+   "len": 3.99
+  }
+ ]
+}
